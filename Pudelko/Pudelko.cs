@@ -24,7 +24,7 @@ namespace PudelkoLib
             get => Math.Round(a, 3);
             init
             {
-                if (value <= 0 || value > 10000)
+                if (value <= 0.01 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     a = value;
@@ -35,7 +35,7 @@ namespace PudelkoLib
             get => Math.Round(b, 3);
             init
             {
-                if (value <= 0 || value > 10000)
+                if (value <= 0.01 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     b = value;
@@ -46,7 +46,7 @@ namespace PudelkoLib
             get => Math.Round(c, 3);
             init
             {
-                if (value <= 0 || value > 10000)
+                if (value <= 0.01 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     c = value;
@@ -55,29 +55,30 @@ namespace PudelkoLib
         public string UnitOfMeasurement { get { return unitOfMeasure.ToString(); } }
         public double Objetosc { get => Math.Round(a * b * c, 9); }
         public double Pole { get => Math.Round(2 * a * b + 2 * a * c + 2 * b * c, 6); }
-        public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure unit = UnitOfMeasure.meter)
+        public Pudelko(double a = 100, double b = 100, double c = 100, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
-            if ((unit == UnitOfMeasure.milimeter) && (a > 10000 || b > 10000 || c > 10000))
-                throw new ArgumentOutOfRangeException();
-            if ((unit == UnitOfMeasure.centimeter) && (a > 1000 || b > 1000 || c > 1000))
-                throw new ArgumentOutOfRangeException();
-            if ((unit == UnitOfMeasure.meter) && (a > 10 || b > 10 || c > 10))
-                throw new ArgumentOutOfRangeException();
+            double def;
+            switch (unit)
+            {
+                default: def = 0.1; break;
+                case UnitOfMeasure.centimeter: def = 10; break;
+                case UnitOfMeasure.milimeter: def = 100; break;
+            }
+            if (a == 100)
+                a = def;
+            if (b == 100)
+                b = def;
+            if (c == 100)
+                c = def;
+            if (unit == UnitOfMeasure.centimeter)
+            { a /= 100; b /= 100; c /= 100; }
+            if (unit == UnitOfMeasure.milimeter)
+            { a /= 1000; b /= 1000; c /= 1000; }
             this.A = a; this.B = b; this.C = c; this.unitOfMeasure = unit;
-            //double[] dimensions = this.FormatUnits(unit);
-            //this.A = dimensions[0]; this.B = dimensions[1]; this.C = dimensions[2];
         }
         public override string ToString()
         {
-            switch (unitOfMeasure)
-            {
-                case UnitOfMeasure.meter:
-                    return $"{Math.Round(A, 3):0.000} {"m"} × {Math.Round(B, 3):0.000} {"m"} × {Math.Round(C, 3):0.000} {"m"}";
-                case UnitOfMeasure.centimeter:
-                    return $"{Math.Round(A, 3):0.0} {"cm"} × {Math.Round(B, 3):0.0} {"cm"} × {Math.Round(C, 3):0.0} {"cm"}";
-                default:
-                    return $"{Math.Round(A, 3)} {"mm"} × {Math.Round(B, 3)} {"mm"} × {Math.Round(C, 3)} {"mm"}";
-            }
+            return $"{Math.Round(A, 3):0.000} {"m"} × {Math.Round(B, 3):0.000} {"m"} × {Math.Round(C, 3):0.000} {"m"}";
         }
         private double[] FormatUnits(UnitOfMeasure format)
         {
@@ -103,21 +104,32 @@ namespace PudelkoLib
         {
             if (String.IsNullOrEmpty(format))
                 return this.ToString();
-            double[] dimensions;
+            //double[] dimensions;
+            //switch (format.ToLower())
+            //{
+            //    case "m":
+            //        dimensions = this.FormatUnits(UnitOfMeasure.meter);
+            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.meter).ToString();
+            //    case "cm":
+            //        dimensions = this.FormatUnits(UnitOfMeasure.centimeter);
+            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.centimeter).ToString();
+            //    case "mm":
+            //        dimensions = this.FormatUnits(UnitOfMeasure.milimeter);
+            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.milimeter).ToString();
+            //    default:
+            //        re
+            //        turn this.ToString();
+            //}
             switch (format.ToLower())
             {
-                case "m":
-                    dimensions = this.FormatUnits(UnitOfMeasure.meter);
-                    return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.meter).ToString();
-                case "cm":
-                    dimensions = this.FormatUnits(UnitOfMeasure.centimeter);
-                    return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.centimeter).ToString();
-                case "mm":
-                    dimensions = this.FormatUnits(UnitOfMeasure.milimeter);
-                    return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.milimeter).ToString();
                 default:
                     return this.ToString();
+                case "cm":
+                    return $"{Math.Round(A * 100, 1):0.0} {"cm"} × {Math.Round(B * 100, 1):0.0} {"cm"} × {Math.Round(C * 100, 1):0.0} {"cm"}";
+                case "mm":
+                    return $"{Math.Round(A * 1000, 0)} {"mm"} × {Math.Round(B * 1000, 0)} {"mm"} × {Math.Round(C * 1000, 0)} {"mm"}";
             }
+
         }
 
         public bool Equals(Pudelko? other)
