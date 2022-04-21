@@ -21,10 +21,10 @@ namespace PudelkoLib
         private readonly UnitOfMeasure unitOfMeasure;
         public double A
         {
-            get => Math.Round(a, 3);
+            get => Math.Truncate(a*1000)/1000;
             init
             {
-                if (value <= 0.01 || value > 10)
+                if (value <= 0.001 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     a = value;
@@ -32,10 +32,10 @@ namespace PudelkoLib
         }
         public double B
         {
-            get => Math.Round(b, 3);
+            get => Math.Truncate(b * 1000) / 1000;
             init
             {
-                if (value <= 0.01 || value > 10)
+                if (value <= 0.001 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     b = value;
@@ -43,10 +43,10 @@ namespace PudelkoLib
         }
         public double C
         {
-            get => Math.Round(c, 3);
+            get => Math.Truncate(c * 1000) / 1000;
             init
             {
-                if (value <= 0.01 || value > 10)
+                if (value <= 0.001 || value > 10)
                     throw new ArgumentOutOfRangeException();
                 else
                     c = value;
@@ -55,7 +55,7 @@ namespace PudelkoLib
         public string UnitOfMeasurement { get { return unitOfMeasure.ToString(); } }
         public double Objetosc { get => Math.Round(a * b * c, 9); }
         public double Pole { get => Math.Round(2 * a * b + 2 * a * c + 2 * b * c, 6); }
-        public Pudelko(double a = 100, double b = 100, double c = 100, UnitOfMeasure unit = UnitOfMeasure.meter)
+        public Pudelko(double a = 0, double b = 0, double c = 0, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
             double def;
             switch (unit)
@@ -64,11 +64,11 @@ namespace PudelkoLib
                 case UnitOfMeasure.centimeter: def = 10; break;
                 case UnitOfMeasure.milimeter: def = 100; break;
             }
-            if (a == 100)
+            if (a == 0)
                 a = def;
-            if (b == 100)
+            if (b == 0)
                 b = def;
-            if (c == 100)
+            if (c == 0)
                 c = def;
             if (unit == UnitOfMeasure.centimeter)
             { a /= 100; b /= 100; c /= 100; }
@@ -122,12 +122,14 @@ namespace PudelkoLib
             //}
             switch (format.ToLower())
             {
-                default:
+                case "m":
                     return this.ToString();
                 case "cm":
                     return $"{Math.Round(A * 100, 1):0.0} {"cm"} × {Math.Round(B * 100, 1):0.0} {"cm"} × {Math.Round(C * 100, 1):0.0} {"cm"}";
                 case "mm":
                     return $"{Math.Round(A * 1000, 0)} {"mm"} × {Math.Round(B * 1000, 0)} {"mm"} × {Math.Round(C * 1000, 0)} {"mm"}";
+                default:
+                    throw new FormatException();
             }
 
         }
