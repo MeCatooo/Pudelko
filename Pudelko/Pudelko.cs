@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PudelkoLib
 {
-    public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable
+    public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         public enum UnitOfMeasure
         {
@@ -21,7 +21,7 @@ namespace PudelkoLib
         private readonly UnitOfMeasure unitOfMeasure;
         public double A
         {
-            get => Math.Truncate(a*1000)/1000;
+            get => Math.Truncate(a * 1000) / 1000;
             init
             {
                 if (value <= 0.001 || value > 10)
@@ -55,7 +55,7 @@ namespace PudelkoLib
         public string UnitOfMeasurement { get { return unitOfMeasure.ToString(); } }
         public double Objetosc { get => Math.Round(a * b * c, 9); }
         public double Pole { get => Math.Round(2 * a * b + 2 * a * c + 2 * b * c, 6); }
-        public Pudelko(double a = 0, double b = 0, double c = 0, UnitOfMeasure unit = UnitOfMeasure.meter)
+        public Pudelko(double a = double.NaN, double b = double.NaN, double c = double.NaN, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
             double def;
             switch (unit)
@@ -64,11 +64,11 @@ namespace PudelkoLib
                 case UnitOfMeasure.centimeter: def = 10; break;
                 case UnitOfMeasure.milimeter: def = 100; break;
             }
-            if (a == 0)
+            if (Double.IsNaN(a))
                 a = def;
-            if (b == 0)
+            if (Double.IsNaN(b))
                 b = def;
-            if (c == 0)
+            if (Double.IsNaN(c))
                 c = def;
             if (unit == UnitOfMeasure.centimeter)
             { a /= 100; b /= 100; c /= 100; }
@@ -104,22 +104,6 @@ namespace PudelkoLib
         {
             if (String.IsNullOrEmpty(format))
                 return this.ToString();
-            //double[] dimensions;
-            //switch (format.ToLower())
-            //{
-            //    case "m":
-            //        dimensions = this.FormatUnits(UnitOfMeasure.meter);
-            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.meter).ToString();
-            //    case "cm":
-            //        dimensions = this.FormatUnits(UnitOfMeasure.centimeter);
-            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.centimeter).ToString();
-            //    case "mm":
-            //        dimensions = this.FormatUnits(UnitOfMeasure.milimeter);
-            //        return new Pudelko(dimensions[0], dimensions[1], dimensions[2], UnitOfMeasure.milimeter).ToString();
-            //    default:
-            //        re
-            //        turn this.ToString();
-            //}
             switch (format.ToLower())
             {
                 case "m":
@@ -181,10 +165,15 @@ namespace PudelkoLib
                 return false;
             return this.Equals(obj as Pudelko);
         }
-
-        public IEnumerator GetEnumerator()
+        public IEnumerator<double> GetEnumerator()
         {
-            throw new NotImplementedException();
+            double[] tmp = this.FormatUnits(unitOfMeasure);
+            foreach (double value in tmp)
+                yield return value;
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public static explicit operator double[](Pudelko pudelko)
