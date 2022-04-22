@@ -80,26 +80,6 @@ namespace PudelkoLib
         {
             return $"{Math.Round(A, 3):0.000} {"m"} × {Math.Round(B, 3):0.000} {"m"} × {Math.Round(C, 3):0.000} {"m"}";
         }
-        private double[] FormatUnits(UnitOfMeasure format)
-        {
-            double[] tmp = { a, b, c };
-            if ((int)this.unitOfMeasure < (int)format)
-            {
-                for (int i = 0; i != (int)format - (int)this.unitOfMeasure; i++)
-                {
-                    tmp = new double[] { tmp[0] * 10, tmp[1] * 10, tmp[2] * 10 };
-                }
-            }
-            else if ((int)this.unitOfMeasure > (int)format)
-            {
-                for (int i = 0; i != (int)this.unitOfMeasure - (int)format; i++)
-                {
-                    tmp = new double[] { tmp[0] / 10, tmp[1] / 10, tmp[2] / 10 };
-                }
-            }
-            return tmp;
-        }
-
         public string ToString(string? format, IFormatProvider? formatProvider = null)
         {
             if (String.IsNullOrEmpty(format))
@@ -154,8 +134,8 @@ namespace PudelkoLib
         }
         public static Pudelko operator +(Pudelko a, Pudelko b)
         {
-            double[] dimensionsA = a.FormatUnits(UnitOfMeasure.centimeter);
-            double[] dimensionsB = b.FormatUnits(UnitOfMeasure.centimeter);
+            double[] dimensionsA = { a[0], a[1], a[2] };
+            double[] dimensionsB = { b[0], b[1], b[2] };
             return new Pudelko(dimensionsA[0] + dimensionsB[0], Math.Max(dimensionsA[1], dimensionsA[1]), Math.Max(dimensionsA[2], dimensionsA[2]));
         }
 
@@ -167,7 +147,7 @@ namespace PudelkoLib
         }
         public IEnumerator<double> GetEnumerator()
         {
-            double[] tmp = this.FormatUnits(unitOfMeasure);
+            double[] tmp = {this[0],this[1],this[2] } ;
             foreach (double value in tmp)
                 yield return value;
         }
@@ -178,7 +158,7 @@ namespace PudelkoLib
 
         public static explicit operator double[](Pudelko pudelko)
         {
-            return pudelko.FormatUnits(pudelko.unitOfMeasure);
+            return new double[] { pudelko[0], pudelko[1], pudelko[2] };
         }
         public static implicit operator Pudelko(ValueTuple<int, int, int> dane)
         {

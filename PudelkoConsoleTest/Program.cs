@@ -7,7 +7,8 @@ Console.WriteLine(pudelko.ToString("mm"));
 //Console.WriteLine(pudelko.A);
 //Console.WriteLine(pudelko.B);
 //Console.WriteLine(pudelko.C);
-foreach (var item in pudelko)
+double[] vs = (double[])pudelko;
+foreach (var item in vs)
 {
     Console.WriteLine(item);
 }
