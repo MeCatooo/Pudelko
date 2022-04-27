@@ -55,6 +55,8 @@ namespace PudelkoLib
         public string UnitOfMeasurement { get { return unitOfMeasure.ToString(); } }
         public double Objetosc { get => Math.Round(a * b * c, 9); }
         public double Pole { get => Math.Round(2 * a * b + 2 * a * c + 2 * b * c, 6); }
+        //Parametry przyjmują wartość NaN aby móc zachować dowolność ilości argumentów, a jednocześnie konstruktor wie,
+        //których paramterów brakuje poprzez uzupełnianie unikalną wartością
         public Pudelko(double a = double.NaN, double b = double.NaN, double c = double.NaN, UnitOfMeasure unit = UnitOfMeasure.meter)
         {
             double def;
