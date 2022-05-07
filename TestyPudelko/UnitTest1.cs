@@ -492,7 +492,85 @@ namespace PudelkoUnitTests
         #endregion
 
         #region Operators overloading ===========================
-        // ToDo
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter, 1, 2, 1, 2, 2, 1)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 1, 1, 1, 11, 10, 15)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 1000, 1000, 1000, 1500, 1000, 1000)]
+        public void Add_Operator(double a, double b, double c, UnitOfMeasure unit, double a1, double b1, double c1, double expectedA, double expectedB, double expectedC)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a1, b1, c1, unit);
+            Pudelko expected = new Pudelko(expectedA, expectedB, expectedC, unit);
+            Pudelko actual = p + p1;
+            Assert.IsTrue(expected.A == actual.A);
+            Assert.IsTrue(expected.B == actual.B);
+            Assert.IsTrue(expected.C == actual.C);
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter, 1, 2, 1)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 1, 1, 1)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 1000, 1000, 1000)]
+        public void Equals_Operator_Incorrect(double a, double b, double c, UnitOfMeasure unit, double a1, double b1, double c1)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a1, b1, c1, unit);
+            Assert.IsFalse(p == p1);
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter)]
+        public void Equals_Operator_Correct(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a, b, c, unit);
+            Assert.IsTrue(p == p1);
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter)]
+        public void NotEquals_Operator_Correct(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a, b, c, unit);
+            Assert.IsFalse(p != p1);
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter, 1, 2, 1)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 1, 1, 1)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 1000, 1000, 1000)]
+        public void NotEquals_Operator_Incorrect(double a, double b, double c, UnitOfMeasure unit, double a1, double b1, double c1)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a1, b1, c1, unit);
+            Assert.IsTrue(p != p1);
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter)]
+        public void Explicit_To_Double_Table(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            double[] actual = (double[])p;
+            Assert.IsTrue(p.A == actual[0]);
+            Assert.IsTrue(p.B == actual[1]);
+            Assert.IsTrue(p.C == actual[2]);
+        }
+        [TestMethod]
+        [DataRow(1000, 1000, 10000)]
+        [DataRow(100, 100, 150)]
+        [DataRow(500, 500, 500)]
+        public void implicit_To_Pudelko_From_Tuple(int a1, int b1, int c1)
+        {
+            ValueTuple<int, int, int> dane = new(a1, b1, c1);
+            Pudelko p = dane;
+            Assert.IsTrue(p.A == a1 / 1000.0);
+            Assert.IsTrue(p.B == b1 / 1000.0);
+            Assert.IsTrue(p.C == c1 / 1000.0);
+        }
+
         #endregion
 
         #region Conversions =====================================
@@ -545,7 +623,19 @@ namespace PudelkoUnitTests
         #endregion
 
         #region Parsing =========================================
-
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter)]
+        public void Parse_To_Pudelko_From_String(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = Pudelko.Parse(p.ToString());
+            Assert.AreEqual(p.A, p1[0]);
+            Assert.AreEqual(p.B, p1[1]);
+            Assert.AreEqual(p.C, p1[2]);
+            Assert.IsTrue(p.Equals(p1));
+        }
         #endregion
 
     }

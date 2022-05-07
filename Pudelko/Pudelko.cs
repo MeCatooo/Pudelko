@@ -2,7 +2,7 @@
 
 namespace PudelkoLib
 {
-    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>//, IComparable<Pudelko>
+    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         public enum UnitOfMeasure
         {
@@ -103,15 +103,15 @@ namespace PudelkoLib
         {
             if (other is null)
                 throw new ArgumentNullException();
-            if (unitOfMeasure != other.unitOfMeasure)
-                return false;
             double[] dimensions = { A, B, C };
             double[] dimensionsOther = { other.A, other.B, other.C };
-            bool[] check = { false, false, false };
+            bool[] check = { false, false, false }; 
+            Console.WriteLine($"{dimensions[1]}  {dimensionsOther[1]}");
             for (int i = 0; i != 3; i++)
             {
                 for (int j = 0; j != 3; j++)
                 {
+                    
                     if (dimensions[i] == dimensionsOther[j])
                     {
                         check[i] = true;
@@ -136,18 +136,20 @@ namespace PudelkoLib
         }
         public static bool operator !=(Pudelko a, Pudelko b)
         {
-            return !a.Equals(b);
+            return !(a.Equals(b));
         }
         public static Pudelko operator +(Pudelko a, Pudelko b)
         {
+            if (a.unitOfMeasure != b.unitOfMeasure)
+                throw new ArgumentException();
             double[] dimensionsA = { a[0], a[1], a[2] };
             double[] dimensionsB = { b[0], b[1], b[2] };
-            return new Pudelko(dimensionsA[0] + dimensionsB[0], Math.Max(dimensionsA[1], dimensionsA[1]), Math.Max(dimensionsA[2], dimensionsA[2]));
+            return new Pudelko(dimensionsA[0] + dimensionsB[0], Math.Max(dimensionsA[1], dimensionsB[1]), Math.Max(dimensionsA[2], dimensionsB[2]));
         }
 
         public override bool Equals(object? obj)
         {
-            if (!(obj is Pudelko))
+            if (obj is not Pudelko)
                 return false;
             return this.Equals(obj as Pudelko);
         }

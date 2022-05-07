@@ -13,7 +13,5 @@ namespace PudelkoConsoleTest
         {
             return new Pudelko(Math.Pow(pudelko.Objetosc, 1 / 3), unit: pudelko.UnitOfMeasurement);
         }
-        
-
     }
 }

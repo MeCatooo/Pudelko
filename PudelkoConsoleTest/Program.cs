@@ -10,11 +10,18 @@ Pudelko pudelko1 = new Pudelko(10, 10, 10, Pudelko.UnitOfMeasure.milimeter);
 //Console.WriteLine(pudelko.A);
 //Console.WriteLine(pudelko.B);
 //Console.WriteLine(pudelko.C);
-//(1, 1, 1, UnitOfMeasure.meter, 1, 2, 1)
-Pudelko test = new Pudelko(1, 1, 1, UnitOfMeasure.meter);
-Pudelko test1 = new Pudelko(1, 1, 1, UnitOfMeasure.meter);
+//[DataRow(10, 10, 15, UnitOfMeasure.centimeter, 1, 1, 1, 11, 10, 15)]
 
-Console.WriteLine(test.Equals(test1));
+//Pudelko test = new Pudelko(10, 10, 15, UnitOfMeasure.centimeter);
+//Pudelko test1 = new Pudelko(1, 1, 1, UnitOfMeasure.centimeter);
+//Pudelko expected = new Pudelko(11, 10, 15, UnitOfMeasure.centimeter);
+//Pudelko actual = test + test1;
+//Console.WriteLine(test.ToString());
+//Console.WriteLine(test1.ToString());
+//Console.WriteLine(expected.ToString());
+//Console.WriteLine(actual.ToString());
+//Console.WriteLine(expected.Equals(actual));
+
 List<Pudelko> list = new List<Pudelko>();
 list.Add(pudelko1);
 list.Add(pudelko);
@@ -31,8 +38,6 @@ foreach(Pudelko item in list)
 //Console.WriteLine(pudelko + pudelko1);
 static int PudelkoSort(Pudelko a, Pudelko b)
 {
-    //if (other is null || other is not Pudelko)
-    //    throw new ArgumentException();
     if (a.Objetosc > b.Objetosc) { return -1; }
     else if (a.Objetosc < b.Objetosc) { return 1; }
     else if (a.Pole > b.Pole) { return -1; }
