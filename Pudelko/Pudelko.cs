@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace PudelkoLib
 {
-    public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
+    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>//, IComparable<Pudelko>
     {
         public enum UnitOfMeasure
         {
@@ -52,7 +47,7 @@ namespace PudelkoLib
                     c = value;
             }
         }
-        public string UnitOfMeasurement { get { return unitOfMeasure.ToString(); } }
+        public UnitOfMeasure UnitOfMeasurement { get { return unitOfMeasure; } }
         public double Objetosc { get => Math.Round(a * b * c, 9); }
         public double Pole { get => Math.Round(2 * a * b + 2 * a * c + 2 * b * c, 6); }
         public Pudelko(double a = double.NaN, double b = double.NaN, double c = double.NaN, UnitOfMeasure unit = UnitOfMeasure.meter)
@@ -78,9 +73,13 @@ namespace PudelkoLib
         }
         public override string ToString()
         {
-            return $"{Math.Round(A, 3):0.000} {"m"} × {Math.Round(B, 3):0.000} {"m"} × {Math.Round(C, 3):0.000} {"m"}";
+            return $"{A:0.000} {"m"} × {B:0.000} {"m"} × {C:0.000} {"m"}";
         }
-        public string ToString(string? format, IFormatProvider? formatProvider = null)
+        public string ToString(string format)
+        {
+            return this.ToString(format, null);
+        }
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
             if (String.IsNullOrEmpty(format))
                 return this.ToString();
@@ -89,9 +88,9 @@ namespace PudelkoLib
                 case "m":
                     return this.ToString();
                 case "cm":
-                    return $"{Math.Round(A * 100, 1):0.0} {"cm"} × {Math.Round(B * 100, 1):0.0} {"cm"} × {Math.Round(C * 100, 1):0.0} {"cm"}";
+                    return $"{A * 100:0.0} {"cm"} × {B * 100:0.0} {"cm"} × {C * 100:0.0} {"cm"}";
                 case "mm":
-                    return $"{Math.Round(A * 1000, 0)} {"mm"} × {Math.Round(B * 1000, 0)} {"mm"} × {Math.Round(C * 1000, 0)} {"mm"}";
+                    return $"{A * 1000} {"mm"} × {B * 1000} {"mm"} × {C * 1000} {"mm"}";
                 default:
                     throw new FormatException();
             }
@@ -106,18 +105,23 @@ namespace PudelkoLib
                 return false;
             double[] dimensions = { A, B, C };
             double[] dimensionsOther = { other.A, other.B, other.C };
-            bool check = false;
+            bool[] check = { false, false, false };
             for (int i = 0; i != 3; i++)
             {
                 for (int j = 0; j != 3; j++)
                 {
                     if (dimensions[i] == dimensionsOther[j])
-                        check = true;
+                    {
+                        check[i] = true;
+                        dimensionsOther[j] = 9999999;
+                        break;
+                    }
                 }
-                if (check == false)
-                    return false;
             }
-            return true;
+            if (check.All(value => value == true))
+                return true;
+            else
+                return false;
         }
         public override int GetHashCode()
         {
@@ -147,7 +151,7 @@ namespace PudelkoLib
         }
         public IEnumerator<double> GetEnumerator()
         {
-            double[] tmp = {this[0],this[1],this[2] } ;
+            double[] tmp = { this[0], this[1], this[2] };
             foreach (double value in tmp)
                 yield return value;
         }
@@ -180,6 +184,23 @@ namespace PudelkoLib
                         return A;
                 }
             }
+        }
+        public static Pudelko Parse(string data)
+        {
+            UnitOfMeasure unit;
+            string[] dane = data.Split(" ");
+            if (!(dane[1] == dane[4] && dane[4] == dane[7]))
+            {
+                throw new ArgumentException();
+            }
+            switch (dane[1].ToLower())
+            {
+                case "m": unit = UnitOfMeasure.meter; break;
+                case "cm": unit = UnitOfMeasure.centimeter; break;
+                case "mm": unit = UnitOfMeasure.milimeter; break;
+                default: throw new ArgumentException();
+            }
+            return new Pudelko(Double.Parse(dane[0]), Double.Parse(dane[3]), Double.Parse(dane[6]), unit);
         }
     }
 }

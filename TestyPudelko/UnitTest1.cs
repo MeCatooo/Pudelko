@@ -448,12 +448,47 @@ namespace PudelkoUnitTests
 
 
         #region Pole, Objêtoœæ ===================================
-        // ToDo
-
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter, 1)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 0.0015)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 0.125)]
+        public void Objetosc_Correct(double a, double b, double c, UnitOfMeasure unit, double expected)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Assert.AreEqual(expected, p.Objetosc);
+        }
+        [TestMethod]
+        [DataRow(5, 5, 5, UnitOfMeasure.meter, 150)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 0.08)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 1.5)]
+        public void Pole_Correct(double a, double b, double c, UnitOfMeasure unit, double expected)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Assert.AreEqual(expected, p.Pole);
+        }
         #endregion
 
         #region Equals ===========================================
-        // ToDo
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter)]
+        public void Equals_Correct(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a, b, c, unit);
+            Assert.IsTrue(Pudelko.Equals(p, p1));
+        }
+        [TestMethod]
+        [DataRow(1, 1, 1, UnitOfMeasure.meter, 1, 2, 1)]
+        [DataRow(10, 10, 15, UnitOfMeasure.centimeter, 1, 1, 1)]
+        [DataRow(500, 500, 500, UnitOfMeasure.milimeter, 1000, 1000, 1000)]
+        public void Equals_Incorrect(double a, double b, double c, UnitOfMeasure unit, double a1, double b1, double c1)
+        {
+            Pudelko p = new Pudelko(a, b, c, unit);
+            Pudelko p1 = new Pudelko(a1, b1, c1, unit);
+            Assert.IsFalse(Pudelko.Equals(p, p1));
+        }
         #endregion
 
         #region Operators overloading ===========================
